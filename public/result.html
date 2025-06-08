@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SPS School - Student Result Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefefe;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      background-color: #2180b3;
+    }
+
+    header img {
+      height: 50px;
+    }
+
+    header p {
+      font-size: 22px;
+      font-weight: bold;
+      margin-left: 10px;
+      color: white;
+      flex: 1;
+      text-align: center;
+    }
+
+    .section {
+      padding: 30px 15px;
+      text-align: center;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    input, button {
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px auto;
+      width: 100%;
+      max-width: 320px;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #2180b3;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+  .result-card {
+  background: #f0f8ff;
+  width: 100%;
+  max-width: 794px;  /* A4 width */
+  aspect-ratio: 794 / 1123; /* maintain A4 aspect */
+  padding: 20px;
+  border: 1px solid #000;
+  margin: 20px auto;
+  box-shadow: 0px 0px 10px #ccc;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #eee;
+    }
+
+    #downloadBtn {
+      display: none;
+      margin: 25px auto;
+      padding: 12px 20px;
+    }
+
+    footer {
+      background-color: #004080;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 50px;
+    }
+
+.sign-stamp-wrapper {
+  position: relative;
+  width: 250px;
+  margin-left: auto;
+  margin-top: 35px;
+  text-align: center;
+}
+
+.stamp {
+  width: 100%;
+  opacity: 0.5;
+  display: block;
+}
+
+.sign {
+  position: absolute;
+  top: 20px; /* adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+}
+.sign-and-stamp{
+   position: relative;
+  width: 250px;
+  margin-left: auto;
+  margin-top: -20px;
+  text-align: center;
+}
+.pdf-mode {
+  width: 794px !important;
+  height: auto !important;
+  box-sizing: border-box;
+}
+
+
+
+
+   @media screen and (max-width: 768px) {
+  .result-card {
+    width: 95%;
+    aspect-ratio: auto;
+    padding: 10px;
+  }
+
+  .result-card img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .result-card table {
+    font-size: 13px;
+    word-break: break-word;
+  }
+
+  .result-card h2, 
+  .result-card h3 {
+    font-size: 18px;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <img src="logo.jpeg" alt="School Logo">
+    <p>Star Public School</p>
+  </header>
+
+  <!-- RESULT FORM -->
+  <div class="section" id="result">
+    <h2>Check Your Result</h2>
+    <form id="resultForm">
+      <input type="text" id="class" placeholder="Enter Class" required>
+      <input type="text" id="roll" placeholder="Enter Roll No" required>
+      <button type="submit">Get Result</button>
+    </form>
+
+    <div id="resultDisplay"></div>
+    <button id="downloadBtn" onclick="downloadPDF()">Download as PDF</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; 2025 Star Public School. All rights reserved.
+  </footer>
+
+  <!-- JS Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+  <!-- RESULT SCRIPT -->
+  <script>
+    document.getElementById('resultForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const studentClass = document.getElementById('class').value;
+      const roll = document.getElementById('roll').value;
+
+      const res = await fetch(`/result?class=${studentClass}&roll=${roll}`);
+      const data = await res.json();
+
+      const display = document.getElementById('resultDisplay');
+
+      if (data.error) {
+        display.innerHTML = `<p style="color: red;">${data.error}</p>`;
+        document.getElementById('downloadBtn').style.display = "none";
+        return;
+      }
+
+      display.innerHTML = `
+  <div class="result-card" id="resultCard">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+      <img src="logo.jpeg" style="height: 70px;" />
+      <div style="text-align: center; flex: 1;">
+        <h2>${data.schoolName}</h2>
+        <p style="margin: 0;">${data.schoolAddress}</p>
+        <h3>First Terminal Examination Result - ${new Date().getFullYear()}</h3>
+      </div>
+    </div>
+    <hr />
+  <table style="table-layout: fixed; width: 100%;">
+  <tr>
+    <td style="text-align: left; width: 45%; font-weight: bold;">Name of Student:</td>
+    <td style="text-align: left;">${data.studentName}</td>
+  </tr>
+  <tr>
+    <td style="text-align: left; width: 45%; font-weight: bold;">Father's Name:</td>
+    <td style="text-align: left;">${data.fatherName}</td>
+  </tr>
+  <tr>
+    <td style="text-align: left; width: 45%; font-weight: bold;">Class:</td>
+    <td style="text-align: left;">${data.class}</td>
+  </tr>
+  <tr>
+    <td style="text-align: left; width: 45%; font-weight: bold;">Roll Number:</td>
+    <td style="text-align: left;">${data.roll}</td>
+  </tr>
+</table>
+
+
+    <table>
+      <thead>
+        <tr><th>Subject</th><th>Full Marks</th><th>Pass Marks</th><th>Marks Obtained</th></tr>
+      </thead>
+      <tbody>
+        ${data.marks.map(m => `
+          <tr>
+            <td>${m.subject}</td>
+            <td>${m.fullMarks}</td>
+            <td>${Math.floor(m.fullMarks * 0.3)}</td>
+            <td>${m.obtainedMarks}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+    <table>
+      <tr><td><strong>Total Marks:</strong></td><td>${data.total}</td></tr>
+      <tr><td><strong>Percentage:</strong></td><td>${data.percentage}%</td></tr>
+      <tr><td><strong>Division:</strong></td><td>${data.division}</td></tr>
+      <tr><td><strong>Remarks:</strong></td><td>${data.description}</td></tr>
+    </table>
+   <div class="sign-stamp-wrapper">
+  <img src="stamp.jpeg" class="stamp" />
+  <img src="sign.jpeg" class="sign" />  
+</div>
+<div class="sign-and-stamp">
+  <p>Principal's Signature & Stamp</p>
+  </div> 
+
+    </div>
+  </div>`;
+      document.getElementById('downloadBtn').style.display = "block";
+    });
+
+  async function downloadPDF() {
+  const resultCard = document.getElementById("resultCard");
+  resultCard.classList.add('pdf-mode');
+  const canvas = await html2canvas(resultCard, { scale: 2 });
+
+  const imgData = canvas.toDataURL("image/png");
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p", "pt", "a4");
+
+  const pdfWidth = 595.28;
+  const pdfHeight = 841.89;
+  const imgProps = {
+    width: pdfWidth,
+    height: canvas.height * pdfWidth / canvas.width
+  };
+
+  pdf.addImage(imgData, "PNG", 0, 0, imgProps.width, imgProps.height);
+    resultCard.classList.remove('pdf-mode');
+  pdf.save("student_result.pdf");
+}
+
+  </script>
+</body>
+</html>
