@@ -7,11 +7,12 @@
 
 nav img {
   height: 50px;
-  width: 50px;
+  width: 40px;
   object-fit: contain;
   position: absolute;
-  top: 10px;
+  top: 5px;
   left: 10px;
+
 }
 nav {
     position: relative;
@@ -26,7 +27,7 @@ nav h1 {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 24px;
+    font-size: 20px;
     color: white;
     margin: 0;
 }
