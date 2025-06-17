@@ -66,8 +66,8 @@
   .result-card {
   background: #f0f8ff;
   width: 100%;
-  max-width: 794px;  /* A4 width */
-  aspect-ratio: 794 / 1123; /* maintain A4 aspect */
+  max-width: 794px;
+  aspect-ratio: 794 / 1123;
   padding: 20px;
   border: 1px solid #000;
   margin: 20px auto;
@@ -75,7 +75,6 @@
   box-sizing: border-box;
   overflow: auto;
 }
-
 
     table {
       width: 100%;
@@ -124,7 +123,7 @@
 
 .sign {
   position: absolute;
-  top: 20px; /* adjust as needed */
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   width: 100px;
@@ -141,9 +140,6 @@
   height: auto !important;
   box-sizing: border-box;
 }
-
-
-
 
    @media screen and (max-width: 768px) {
   .result-card {
@@ -172,13 +168,11 @@
 </head>
 <body>
 
-  <!-- HEADER -->
   <header>
     <img src="logo.jpeg" alt="School Logo">
     <p>Star Public School</p>
   </header>
 
-  <!-- RESULT FORM -->
   <div class="section" id="result">
     <h2>Check Your Result</h2>
     <form id="resultForm">
@@ -191,16 +185,13 @@
     <button id="downloadBtn" onclick="downloadPDF()">Download as PDF</button>
   </div>
 
-  <!-- FOOTER -->
   <footer>
     &copy; 2025 Star Public School. All rights reserved.
   </footer>
 
-  <!-- JS Dependencies -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-  <!-- RESULT SCRIPT -->
   <script>
     document.getElementById('resultForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -248,10 +239,16 @@
   </tr>
 </table>
 
-
     <table>
       <thead>
-        <tr><th>Subject</th><th>Full Marks</th><th>Pass Marks</th><th>Marks Obtained</th></tr>
+       <tr>
+  <th>  Subject details</th>
+  <th>Full Marks</th>
+  <th>Pass Marks</th>
+  <th><div>First Term</div><div>Marks Obtained</div></th>
+  <th><div>Second Term</div><div>Marks Obtained</div></th>
+  <th><div>Annual Term</div><div>Marks Obtained</div></th>
+</tr>
       </thead>
       <tbody>
         ${data.marks.map(m => `
@@ -259,16 +256,55 @@
             <td>${m.subject}</td>
             <td>${m.fullMarks}</td>
             <td>${Math.floor(m.fullMarks * 0.3)}</td>
-            <td>${m.obtainedMarks}</td>
+            <td>${m.obtainedMarks || ''}</td>
+            <td>${m.secondTerm || ''}</td>
+            <td>${m.thirdTerm || ''}</td>
           </tr>`).join('')}
       </tbody>
     </table>
-    <table>
-      <tr><td><strong>Total Marks:</strong></td><td>${data.total}</td></tr>
-      <tr><td><strong>Percentage:</strong></td><td>${data.percentage}%</td></tr>
-      <tr><td><strong>Division:</strong></td><td>${data.division}</td></tr>
-      <tr><td><strong>Remarks:</strong></td><td>${data.description}</td></tr>
-    </table>
+   <table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>First Term</th>
+      <th>Second Term</th>
+      <th>Annual Term</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Total Marks</strong></td>
+      <td>${data.total || ''}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>Marks Obtained</strong></td>
+      <td>${data.totalObtained || data.total || ''}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>Percentage</strong></td>
+      <td>${data.percentage || ''}%</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>Division</strong></td>
+      <td>${data.division || ''}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong>Remarks</strong></td>
+      <td>${data.description || ''}</td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
    <div class="sign-stamp-wrapper">
   <img src="stamp.jpeg" class="stamp" />
   <img src="sign.jpeg" class="sign" />  
@@ -302,7 +338,6 @@
     resultCard.classList.remove('pdf-mode');
   pdf.save("student_result.pdf");
 }
-
   </script>
 </body>
 </html>
