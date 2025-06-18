@@ -36,7 +36,7 @@
     }
 
     .section {
-      padding: 30px 15px;
+      padding: 20px 15px;
       text-align: center;
     }
 
@@ -63,34 +63,108 @@
       font-weight: 600;
     }
 
-  .result-card {
-  background: #f0f8ff;
-  width: 100%;
-  max-width: 794px;
-  aspect-ratio: 794 / 1123;
-  padding: 20px;
-  border: 1px solid #000;
-  margin: 20px auto;
-  box-shadow: 0px 0px 10px #ccc;
-  box-sizing: border-box;
-  overflow: auto;
-}
+    .result-card {
+      background: #fff;
+      width: 100%;
+      max-width: 794px;
+      min-height: 1123px;
+      padding: 30px;
+      border: 1px solid #000;
+      margin: 20px auto;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .school-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .school-header img {
+      height: 60px;
+      width: auto;
+    }
+
+    .school-info {
+      flex: 1;
+      text-align: center;
+    }
+
+    .school-info h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #2180b3;
+    }
+
+    .school-info p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 14px;
+      margin: 15px 0;
+      font-size: 13px;
     }
 
     th, td {
       border: 1px solid #000;
-      padding: 8px;
-      text-align: center;
+      padding: 6px 8px;
+      text-align: left;
     }
 
     th {
-      background-color: #eee;
+      background-color: #f5f5f5;
+      font-weight: 600;
+    }
+
+    .details-table td:first-child {
+      width: 150px;
+      font-weight: 600;
+    }
+
+    .marks-table th {
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .marks-table td {
+      text-align: center;
+    }
+
+    .total-row {
+      font-weight: bold;
+      background-color: #f5f5f5;
+    }
+
+    .sign-stamp-wrapper {
+      position: absolute;
+      bottom: 60px;
+      right: 30px;
+      width: 200px;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .stamp {
+      width: 120px;
+      opacity: 0.5;
+      margin-bottom: -40px;
+    }
+
+    .sign {
+      width: 80px;
+      margin-bottom: 5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sign-text {
+      font-size: 12px;
+      margin: 0;
     }
 
     #downloadBtn {
@@ -104,70 +178,47 @@
       color: white;
       text-align: center;
       padding: 15px;
-      margin-top: 50px;
+      margin-top: 30px;
     }
 
-.sign-stamp-wrapper {
-  position: relative;
-  width: 250px;
-  margin-left: auto;
-  margin-top: 35px;
-  text-align: center;
-}
+    .pdf-mode {
+      margin: 0;
+      padding: 30px;
+      box-shadow: none;
+    }
 
-.stamp {
-  width: 100%;
-  opacity: 0.5;
-  display: block;
-}
+    @media screen and (max-width: 768px) {
+      .result-card {
+        padding: 15px;
+        min-height: auto;
+      }
 
-.sign {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-}
-.sign-and-stamp{
-   position: relative;
-  width: 250px;
-  margin-left: auto;
-  margin-top: -20px;
-  text-align: center;
-}
-.pdf-mode {
-  width: 794px !important;
-  height: auto !important;
-  box-sizing: border-box;
-}
+      .school-header {
+        flex-direction: column;
+      }
 
-   @media screen and (max-width: 768px) {
-  .result-card {
-    width: 95%;
-    aspect-ratio: auto;
-    padding: 10px;
-  }
+      .school-header img {
+        margin-bottom: 10px;
+      }
 
-  .result-card img {
-    max-width: 100%;
-    height: auto;
-  }
+      table {
+        font-size: 11px;
+      }
 
-  .result-card table {
-    font-size: 13px;
-    word-break: break-word;
-  }
+      th, td {
+        padding: 4px;
+      }
 
-  .result-card h2, 
-  .result-card h3 {
-    font-size: 18px;
-  }
-}
-
+      .sign-stamp-wrapper {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        margin: 20px auto;
+      }
+    }
   </style>
 </head>
 <body>
-
   <header>
     <img src="logo.jpeg" alt="School Logo">
     <p>Star Public School</p>
@@ -209,143 +260,200 @@
         return;
       }
 
+      // Calculate totals for each term
+      const firstTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0);
+      const secondTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0);
+      const thirdTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0);
+      const annualTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0);
+
       display.innerHTML = `
-  <div class="result-card" id="resultCard">
-    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-      <img src="logo.jpeg" style="height: 70px;" />
-      <div style="text-align: center; flex: 1;">
-        <h2>${data.schoolName}</h2>
-        <p style="margin: 0;">${data.schoolAddress}</p>
-        <h3>First Terminal Examination Result - ${new Date().getFullYear()}</h3>
-      </div>
-    </div>
-    <hr />
-  <table style="table-layout: fixed; width: 100%;">
-  <tr>
-    <td style="text-align: left; width: 45%; font-weight: bold;">Name of Student:</td>
-    <td style="text-align: left;">${data.studentName}</td>
-  </tr>
-  <tr>
-    <td style="text-align: left; width: 45%; font-weight: bold;">Father's Name:</td>
-    <td style="text-align: left;">${data.fatherName}</td>
-  </tr>
-  <tr>
-    <td style="text-align: left; width: 45%; font-weight: bold;">Class:</td>
-    <td style="text-align: left;">${data.class}</td>
-  </tr>
-  <tr>
-    <td style="text-align: left; width: 45%; font-weight: bold;">Roll Number:</td>
-    <td style="text-align: left;">${data.roll}</td>
-  </tr>
-</table>
+        <div class="result-card" id="resultCard">
+          <div class="school-header">
+            <img src="logo.jpeg" alt="School Logo" />
+            <div class="school-info">
+              <h2>${data.schoolName}</h2>
+              <p>${data.schoolAddress}</p>
+              <h3>First Terminal Examination Result - ${new Date().getFullYear()}</h3>
+            </div>
+          </div>
+          <hr />
+          
+          <table class="details-table">
+            <tr>
+              <td>Name of Student:</td>
+              <td>${data.studentName}</td>
+            </tr>
+            <tr>
+              <td>Father's Name:</td>
+              <td>${data.fatherName}</td>
+            </tr>
+            <tr>
+              <td>Class:</td>
+              <td>${data.class}</td>
+            </tr>
+            <tr>
+              <td>Roll Number:</td>
+              <td>${data.roll}</td>
+            </tr>
+          </table>
 
-    <table>
-      <thead>
-       <tr>
-  <th>  Subject details</th>
-  <th>Full Marks</th>
-  <th>Pass Marks</th>
-  <th><div>First Term</div><div>Marks Obtained</div></th>
-  <th><div>Second Term</div><div>Marks Obtained</div></th>
-  <th><div>Third Term</div><div>Marks Obtained</div></th>
-  <th><div>Annual Term</div><div>Marks Obtained</div></th>
-</tr>
-      </thead>
-      <tbody>
-        ${data.marks.map(m => `
-          <tr>
-            <td>${m.subject}</td>
-            <td>${m.fullMarks}</td>
-            <td>${Math.floor(m.fullMarks * 0.3)}</td>
-            <td>${m.obtainedMarks || ''}</td>
-            <td>${m.secondTerm || ''}</td>
-            <td>${m.thirdTerm || ''}</td>
-            <td>${m.AnnTerm || ''}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>
-  <table>
-  <thead>
-    <tr>
-      <th></th>
-      <th>First Term</th>
-      <th>Second Term</th>
-      <th>Third Term</th>
-      <th>Annual Term</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Total Marks</strong></td>
-      <td>${data.total || ''}</td>
-      <td></td>
-      <td></td>
-      <td>${data.annualTotal || ''}</td>
-    </tr>
-    <tr>
-      <td><strong>Marks Obtained</strong></td>
-      <td>${data.totalObtained || data.total || ''}</td>
-      <td></td>
-      <td></td>
-      <td>${data.annualObtained || ''}</td>
-    </tr>
-    <tr>
-      <td><strong>Percentage</strong></td>
-      <td>${data.percentage || ''}</td>
-      <td></td>
-      <td></td>
-      <td>${data.annualPercentage || ''}</td>
-    </tr>
-    <tr>
-      <td><strong>Division</strong></td>
-      <td>${data.division || ''}</td>
-      <td></td>
-      <td></td>
-      <td>${data.annualDivision || ''}</td>
-    </tr>
-    <tr>
-      <td><strong>Remarks</strong></td>
-      <td>${data.description || ''}</td>
-      <td></td>
-      <td></td>
-      <td>${data.annualRemarks || ''}</td>
-    </tr>
-  </tbody>
-</table>
+          <table class="marks-table">
+            <thead>
+              <tr>
+                <th>Subject Details</th>
+                <th>Full Marks</th>
+                <th>Pass Marks</th>
+                <th>First Term<br>Marks</th>
+                <th>Second Term<br>Marks</th>
+                <th>Third Term<br>Marks</th>
+                <th>Annual Term<br>Marks</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.marks.map(m => `
+                <tr>
+                  <td>${m.subject}</td>
+                  <td>${m.fullMarks}</td>
+                  <td>${Math.floor(m.fullMarks * 0.3)}</td>
+                  <td>${m.obtainedMarks || ''}</td>
+                  <td>${m.secondTerm || ''}</td>
+                  <td>${m.thirdTerm || ''}</td>
+                  <td>${m.AnnTerm || ''}</td>
+                </tr>`).join('')}
+              <tr class="total-row">
+                <td>Total</td>
+                <td>${data.marks.reduce((sum, m) => sum + m.fullMarks, 0)}</td>
+                <td>${data.marks.reduce((sum, m) => sum + Math.floor(m.fullMarks * 0.3), 0)}</td>
+                <td>${firstTermTotal}</td>
+                <td>${secondTermTotal}</td>
+                <td>${thirdTermTotal}</td>
+                <td>${annualTermTotal}</td>
+              </tr>
+            </tbody>
+          </table>
 
-   <div class="sign-stamp-wrapper">
-  <img src="stamp.jpeg" class="stamp" />
-  <img src="sign.jpeg" class="sign" />  
-</div>
-<div class="sign-and-stamp">
-  <p>Principal's Signature & Stamp</p>
-  </div> 
+          <table class="marks-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>First Term</th>
+                <th>Second Term</th>
+                <th>Third Term</th>
+                <th>Annual Term</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Total Marks</strong></td>
+                <td>${data.total || ''}</td>
+                <td></td>
+                <td></td>
+                <td>${data.annualTotal || ''}</td>
+              </tr>
+              <tr>
+                <td><strong>Marks Obtained</strong></td>
+                <td>${data.totalObtained || data.total || ''}</td>
+                <td></td>
+                <td></td>
+                <td>${data.annualObtained || ''}</td>
+              </tr>
+              <tr>
+                <td><strong>Percentage</strong></td>
+                <td>${data.percentage || ''}</td>
+                <td></td>
+                <td></td>
+                <td>${data.annualPercentage || ''}</td>
+              </tr>
+              <tr>
+                <td><strong>Division</strong></td>
+                <td>${data.division || ''}</td>
+                <td></td>
+                <td></td>
+                <td>${data.annualDivision || ''}</td>
+              </tr>
+              <tr>
+                <td><strong>Remarks</strong></td>
+                <td>${data.description || ''}</td>
+                <td></td>
+                <td></td>
+                <td>${data.annualRemarks || ''}</td>
+              </tr>
+            </tbody>
+          </table>
 
-    </div>
-  </div>`;
+          <div class="sign-stamp-wrapper">
+            <img src="stamp.jpeg" class="stamp" alt="School Stamp" />
+            <img src="sign.jpeg" class="sign" alt="Principal's Signature" />
+            <p class="sign-text">Principal's Signature & Stamp</p>
+          </div>
+        </div>`;
+      
       document.getElementById('downloadBtn').style.display = "block";
     });
 
-  async function downloadPDF() {
-  const resultCard = document.getElementById("resultCard");
-  resultCard.classList.add('pdf-mode');
-  const canvas = await html2canvas(resultCard, { scale: 2 });
+    async function downloadPDF() {
+      const resultCard = document.getElementById("resultCard");
+      resultCard.classList.add('pdf-mode');
+      
+      const canvas = await html2canvas(resultCard, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        allowTaint: true
+      });
 
-  const imgData = canvas.toDataURL("image/png");
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "pt", "a4");
+      const imgData = canvas.toDataURL("image/jpeg", 1.0);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: "a4"
+      });
 
-  const pdfWidth = 595.28;
-  const pdfHeight = 841.89;
-  const imgProps = {
-    width: pdfWidth,
-    height: canvas.height * pdfWidth / canvas.width
-  };
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  pdf.addImage(imgData, "PNG", 0, 0, imgProps.width, imgProps.height);
-    resultCard.classList.remove('pdf-mode');
-  pdf.save("student_result.pdf");
-}
+      pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight, "", "FAST");
+      resultCard.classList.remove('pdf-mode');
+      pdf.save("student_result.pdf");
+    }
+  </script>
+
+  <script>
+    (function() {
+      const popup = document.createElement("div");
+      popup.innerHTML = "Generated by <strong>GenZai.in</strong>";
+      Object.assign(popup.style, {
+        position: "fixed",
+        bottom: "20px",
+        left: "20px",
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
+        color: "#fff",
+        padding: "8px 12px",
+        borderRadius: "8px",
+        fontSize: "14px",
+        zIndex: "1000",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        opacity: "0",
+        transform: "translateY(10px)",
+        transition: "opacity 0.5s ease, transform 0.5s ease"
+      });
+
+      document.body.appendChild(popup);
+
+      requestAnimationFrame(() => {
+        popup.style.opacity = "1";
+        popup.style.transform = "translateY(0)";
+      });
+
+      setTimeout(() => {
+        popup.style.opacity = "0";
+        popup.style.transform = "translateY(10px)";
+        setTimeout(() => popup.remove(), 500);
+      }, 5000);
+    })();
   </script>
 </body>
 </html>
