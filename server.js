@@ -57,7 +57,7 @@ app.get('/result', (req, res) => {
 
   res.json({
     schoolName: "STAR PUBLIC SCHOOL",
-    schoolAddress: "Main road Mathia Bazar, Maghwal",
+    schoolAddress: "Main road Mathia Bazar, Meghwal",
     studentName: student.Name,
     fatherName: student.FatherName,
     class: studentClass,
