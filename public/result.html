@@ -264,12 +264,13 @@
           </tr>`).join('')}
       </tbody>
     </table>
-   <table>
+  <table>
   <thead>
     <tr>
       <th></th>
       <th>First Term</th>
       <th>Second Term</th>
+      <th>Third Term</th>
       <th>Annual Term</th>
     </tr>
   </thead>
@@ -279,30 +280,35 @@
       <td>${data.total || ''}</td>
       <td></td>
       <td></td>
+      <td>${data.annualTotal || ''}</td>
     </tr>
     <tr>
       <td><strong>Marks Obtained</strong></td>
       <td>${data.totalObtained || data.total || ''}</td>
       <td></td>
       <td></td>
+      <td>${data.annualObtained || ''}</td>
     </tr>
     <tr>
       <td><strong>Percentage</strong></td>
-      <td>${data.percentage || ''}%</td>
+      <td>${data.percentage || ''}</td>
       <td></td>
       <td></td>
+      <td>${data.annualPercentage || ''}</td>
     </tr>
     <tr>
       <td><strong>Division</strong></td>
       <td>${data.division || ''}</td>
       <td></td>
       <td></td>
+      <td>${data.annualDivision || ''}</td>
     </tr>
     <tr>
       <td><strong>Remarks</strong></td>
       <td>${data.description || ''}</td>
       <td></td>
       <td></td>
+      <td>${data.annualRemarks || ''}</td>
     </tr>
   </tbody>
 </table>
