@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>SPS School - Student Result Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
   <style>
+    /* --------------------
+       Base Typography & Colours
+    -------------------- */
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: "Segoe UI", sans-serif;
       background-color: #fefefe;
       color: #333;
       margin: 0;
       padding: 0;
     }
 
+    /* --------------------
+       Header
+    -------------------- */
     header {
       display: flex;
       align-items: center;
@@ -30,11 +36,14 @@
       font-size: 22px;
       font-weight: bold;
       margin-left: 10px;
-      color: white;
+      color: #fff;
       flex: 1;
       text-align: center;
     }
 
+    /* --------------------
+       Section & Form
+    -------------------- */
     .section {
       padding: 20px 15px;
       text-align: center;
@@ -44,7 +53,8 @@
       margin-top: 20px;
     }
 
-    input, button {
+    input,
+    button {
       padding: 12px;
       font-size: 16px;
       margin: 10px auto;
@@ -57,25 +67,40 @@
 
     button {
       background-color: #2180b3;
-      color: white;
+      color: #fff;
       border: none;
       cursor: pointer;
       font-weight: 600;
     }
 
+    /* --------------------
+       Result Card
+    -------------------- */
     .result-card {
       background: #fff;
       width: 100%;
-      max-width: 794px;
-      min-height: 1123px;
+      max-width: 794px; /* A4 width @96 dpi */
+      min-height: 1123px; /* A4 height @96 dpi */
       padding: 30px;
       border: 1px solid #000;
       margin: 20px auto;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
       position: relative;
     }
 
+    /* A4 fixed size used only during PDF capture */
+    .pdf-capture {
+      width: 794px !important;
+      min-height: 1123px !important;
+      padding: 30px !important;
+      box-sizing: border-box !important;
+      background: #fff !important;
+    }
+
+    /* --------------------
+       Result Card Header
+    -------------------- */
     .school-header {
       display: flex;
       align-items: center;
@@ -103,6 +128,9 @@
       font-size: 14px;
     }
 
+    /* --------------------
+       Tables
+    -------------------- */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -110,7 +138,8 @@
       font-size: 13px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid #000;
       padding: 6px 8px;
       text-align: left;
@@ -140,6 +169,9 @@
       background-color: #f5f5f5;
     }
 
+    /* --------------------
+       Signature & Stamp
+    -------------------- */
     .sign-stamp-wrapper {
       position: absolute;
       bottom: 60px;
@@ -167,6 +199,9 @@
       margin: 0;
     }
 
+    /* --------------------
+       Download Button & Footer
+    -------------------- */
     #downloadBtn {
       display: none;
       margin: 25px auto;
@@ -175,18 +210,15 @@
 
     footer {
       background-color: #004080;
-      color: white;
+      color: #fff;
       text-align: center;
       padding: 15px;
       margin-top: 30px;
     }
 
-    .pdf-mode {
-      margin: 0;
-      padding: 30px;
-      box-shadow: none;
-    }
-
+    /* --------------------
+       Mobile Styles
+    -------------------- */
     @media screen and (max-width: 768px) {
       .result-card {
         padding: 15px;
@@ -205,7 +237,8 @@
         font-size: 11px;
       }
 
-      th, td {
+      th,
+      td {
         padding: 4px;
       }
 
@@ -216,19 +249,46 @@
         margin: 20px auto;
       }
     }
+
+    /* --------------------
+       Print optimisation
+    -------------------- */
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+      }
+      .result-card {
+        box-shadow: none !important;
+        width: 794px !important;
+        min-height: 1123px !important;
+      }
+      #downloadBtn,
+      form,
+      header,
+      footer {
+        display: none !important;
+      }
+    }
   </style>
 </head>
+
 <body>
+  <!-- ---------------------------------------------------------- -->
+  <!-- Header -->
+  <!-- ---------------------------------------------------------- -->
   <header>
-    <img src="logo.jpeg" alt="School Logo">
+    <img src="logo.jpeg" alt="School Logo" />
     <p>Star Public School</p>
   </header>
 
+  <!-- ---------------------------------------------------------- -->
+  <!-- Main Section : Form + Result Display -->
+  <!-- ---------------------------------------------------------- -->
   <div class="section" id="result">
     <h2>Check Your Result</h2>
     <form id="resultForm">
-      <input type="text" id="class" placeholder="Enter Class" required>
-      <input type="text" id="roll" placeholder="Enter Roll No" required>
+      <input type="text" id="class" placeholder="Enter Class" required />
+      <input type="text" id="roll" placeholder="Enter Roll No" required />
       <button type="submit">Get Result</button>
     </form>
 
@@ -236,193 +296,221 @@
     <button id="downloadBtn" onclick="downloadPDF()">Download as PDF</button>
   </div>
 
+  <!-- ---------------------------------------------------------- -->
+  <!-- Footer -->
+  <!-- ---------------------------------------------------------- -->
   <footer>
     &copy; 2025 Star Public School. All rights reserved.
   </footer>
 
+  <!-- ---------------------------------------------------------- -->
+  <!-- Libraries -->
+  <!-- ---------------------------------------------------------- -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
+  <!-- ---------------------------------------------------------- -->
+  <!-- Fetch Result & Render -->
+  <!-- ---------------------------------------------------------- -->
   <script>
-    document.getElementById('resultForm').addEventListener('submit', async function(e) {
+    document.getElementById("resultForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const studentClass = document.getElementById('class').value;
-      const roll = document.getElementById('roll').value;
+      const studentClass = document.getElementById("class").value.trim();
+      const roll = document.getElementById("roll").value.trim();
 
-      const res = await fetch(`/result?class=${studentClass}&roll=${roll}`);
-      const data = await res.json();
+      if (!studentClass || !roll) return;
 
-      const display = document.getElementById('resultDisplay');
+      try {
+        const res = await fetch(`/result?class=${encodeURIComponent(studentClass)}&roll=${encodeURIComponent(roll)}`);
+        const data = await res.json();
 
-      if (data.error) {
-        display.innerHTML = `<p style="color: red;">${data.error}</p>`;
-        document.getElementById('downloadBtn').style.display = "none";
-        return;
-      }
+        const display = document.getElementById("resultDisplay");
 
-      // Calculate totals for each term
-      const firstTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0);
-      const secondTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0);
-      const thirdTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0);
-      const annualTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0);
+        if (data.error) {
+          display.innerHTML = `<p style="color: red;">${data.error}</p>`;
+          document.getElementById("downloadBtn").style.display = "none";
+          return;
+        }
 
-      display.innerHTML = `
-        <div class="result-card" id="resultCard">
-          <div class="school-header">
-            <img src="logo.jpeg" alt="School Logo" />
-            <div class="school-info">
-              <h2>${data.schoolName}</h2>
-              <p>${data.schoolAddress}</p>
-              <h3>First Terminal Examination Result - ${new Date().getFullYear()}</h3>
+        // Aggregate term totals
+        const firstTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0);
+        const secondTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0);
+        const thirdTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0);
+        const annualTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0);
+
+        display.innerHTML = `
+          <div class="result-card" id="resultCard">
+            <div class="school-header">
+              <img src="logo.jpeg" alt="School Logo" />
+              <div class="school-info">
+                <h2>${data.schoolName}</h2>
+                <p>${data.schoolAddress}</p>
+                <h3>First Terminal Examination Result - ${new Date().getFullYear()}</h3>
+              </div>
             </div>
-          </div>
-          <hr />
-          
-          <table class="details-table">
-            <tr>
-              <td>Name of Student:</td>
-              <td>${data.studentName}</td>
-            </tr>
-            <tr>
-              <td>Father's Name:</td>
-              <td>${data.fatherName}</td>
-            </tr>
-            <tr>
-              <td>Class:</td>
-              <td>${data.class}</td>
-            </tr>
-            <tr>
-              <td>Roll Number:</td>
-              <td>${data.roll}</td>
-            </tr>
-          </table>
+            <hr />
 
-          <table class="marks-table">
-            <thead>
+            <table class="details-table">
               <tr>
-                <th>Subject Details</th>
-                <th>Full Marks</th>
-                <th>Pass Marks</th>
-                <th>First Term<br>Marks</th>
-                <th>Second Term<br>Marks</th>
-                <th>Third Term<br>Marks</th>
-                <th>Annual Term<br>Marks</th>
+                <td>Name of Student:</td>
+                <td>${data.studentName}</td>
               </tr>
-            </thead>
-            <tbody>
-              ${data.marks.map(m => `
+              <tr>
+                <td>Father's Name:</td>
+                <td>${data.fatherName}</td>
+              </tr>
+              <tr>
+                <td>Class:</td>
+                <td>${data.class}</td>
+              </tr>
+              <tr>
+                <td>Roll Number:</td>
+                <td>${data.roll}</td>
+              </tr>
+            </table>
+
+            <table class="marks-table">
+              <thead>
                 <tr>
-                  <td>${m.subject}</td>
-                  <td>${m.fullMarks}</td>
-                  <td>${Math.floor(m.fullMarks * 0.3)}</td>
-                  <td>${m.obtainedMarks || ''}</td>
-                  <td>${m.secondTerm || ''}</td>
-                  <td>${m.thirdTerm || ''}</td>
-                  <td>${m.AnnTerm || ''}</td>
-                </tr>`).join('')}
-              <tr class="total-row">
-                <td>Total</td>
-                <td>${data.marks.reduce((sum, m) => sum + m.fullMarks, 0)}</td>
-                <td>${data.marks.reduce((sum, m) => sum + Math.floor(m.fullMarks * 0.3), 0)}</td>
-                <td>${firstTermTotal}</td>
-                <td>${secondTermTotal}</td>
-                <td>${thirdTermTotal}</td>
-                <td>${annualTermTotal}</td>
-              </tr>
-            </tbody>
-          </table>
+                  <th>Subject Details</th>
+                  <th>Full Marks</th>
+                  <th>Pass Marks</th>
+                  <th>First Term<br />Marks</th>
+                  <th>Second Term<br />Marks</th>
+                  <th>Third Term<br />Marks</th>
+                  <th>Annual Term<br />Marks</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.marks.map(
+                  (m) => `
+                  <tr>
+                    <td>${m.subject}</td>
+                    <td>${m.fullMarks}</td>
+                    <td>${Math.floor(m.fullMarks * 0.3)}</td>
+                    <td>${m.obtainedMarks || ""}</td>
+                    <td>${m.secondTerm || ""}</td>
+                    <td>${m.thirdTerm || ""}</td>
+                    <td>${m.AnnTerm || ""}</td>
+                  </tr>`
+                ).join("")}
+                <tr class="total-row">
+                  <td>Total</td>
+                  <td>${data.marks.reduce((sum, m) => sum + m.fullMarks, 0)}</td>
+                  <td>${data.marks.reduce((sum, m) => sum + Math.floor(m.fullMarks * 0.3), 0)}</td>
+                  <td>${firstTermTotal}</td>
+                  <td>${secondTermTotal}</td>
+                  <td>${thirdTermTotal}</td>
+                  <td>${annualTermTotal}</td>
+                </tr>
+              </tbody>
+            </table>
 
-          <table class="marks-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>First Term</th>
-                <th>Second Term</th>
-                <th>Third Term</th>
-                <th>Annual Term</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Total Marks</strong></td>
-                <td>${data.total || ''}</td>
-                <td></td>
-                <td></td>
-                <td>${data.annualTotal || ''}</td>
-              </tr>
-              <tr>
-                <td><strong>Marks Obtained</strong></td>
-                <td>${data.totalObtained || data.total || ''}</td>
-                <td></td>
-                <td></td>
-                <td>${data.annualObtained || ''}</td>
-              </tr>
-              <tr>
-                <td><strong>Percentage</strong></td>
-                <td>${data.percentage || ''}</td>
-                <td></td>
-                <td></td>
-                <td>${data.annualPercentage || ''}</td>
-              </tr>
-              <tr>
-                <td><strong>Division</strong></td>
-                <td>${data.division || ''}</td>
-                <td></td>
-                <td></td>
-                <td>${data.annualDivision || ''}</td>
-              </tr>
-              <tr>
-                <td><strong>Remarks</strong></td>
-                <td>${data.description || ''}</td>
-                <td></td>
-                <td></td>
-                <td>${data.annualRemarks || ''}</td>
-              </tr>
-            </tbody>
-          </table>
+            <table class="marks-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>First Term</th>
+                  <th>Second Term</th>
+                  <th>Third Term</th>
+                  <th>Annual Term</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Total Marks</strong></td>
+                  <td>${data.total || ""}</td>
+                  <td></td>
+                  <td></td>
+                  <td>${data.annualTotal || ""}</td>
+                </tr>
+                <tr>
+                  <td><strong>Marks Obtained</strong></td>
+                  <td>${data.totalObtained || data.total || ""}</td>
+                  <td></td>
+                  <td></td>
+                  <td>${data.annualObtained || ""}</td>
+                </tr>
+                <tr>
+                  <td><strong>Percentage</strong></td>
+                  <td>${data.percentage || ""}</td>
+                  <td></td>
+                  <td></td>
+                  <td>${data.annualPercentage || ""}</td>
+                </tr>
+                <tr>
+                  <td><strong>Division</strong></td>
+                  <td>${data.division || ""}</td>
+                  <td></td>
+                  <td></td>
+                  <td>${data.annualDivision || ""}</td>
+                </tr>
+                <tr>
+                  <td><strong>Remarks</strong></td>
+                  <td>${data.description || ""}</td>
+                  <td></td>
+                  <td></td>
+                  <td>${data.annualRemarks || ""}</td>
+                </tr>
+              </tbody>
+            </table>
 
-          <div class="sign-stamp-wrapper">
-            <img src="stamp.jpeg" class="stamp" alt="School Stamp" />
-            <img src="sign.jpeg" class="sign" alt="Principal's Signature" />
-            <p class="sign-text">Principal's Signature & Stamp</p>
-          </div>
-        </div>`;
-      
-      document.getElementById('downloadBtn').style.display = "block";
+            <div class="sign-stamp-wrapper">
+              <img src="stamp.jpeg" class="stamp" alt="School Stamp" />
+              <img src="sign.jpeg" class="sign" alt="Principal's Signature" />
+              <p class="sign-text">Principal's Signature &amp; Stamp</p>
+            </div>
+          </div>`;
+
+        document.getElementById("downloadBtn").style.display = "block";
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong. Please try again later.");
+      }
     });
+  </script>
 
+  <!-- ---------------------------------------------------------- -->
+  <!-- PDF Generation (Fixed for Mobile) -->
+  <!-- ---------------------------------------------------------- -->
+  <script>
     async function downloadPDF() {
       const resultCard = document.getElementById("resultCard");
-      resultCard.classList.add('pdf-mode');
-      
+      if (!resultCard) return;
+
+      const previousScroll = window.scrollY;
+      resultCard.classList.add("pdf-capture");
+
+      // Ensure styles are applied
+      await new Promise((r) => setTimeout(r, 100));
+
       const canvas = await html2canvas(resultCard, {
         scale: 2,
         useCORS: true,
-        logging: false,
-        allowTaint: true
+        allowTaint: true,
+        scrollY: -window.scrollY, // capture entire element even on mobile
       });
 
       const imgData = canvas.toDataURL("image/jpeg", 1.0);
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "pt",
-        format: "a4"
-      });
+      const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
 
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const imgHeight = (canvas.height * pageWidth) / canvas.width;
 
-      pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight, "", "FAST");
-      resultCard.classList.remove('pdf-mode');
+      pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight, "", "FAST");
       pdf.save("student_result.pdf");
+
+      resultCard.classList.remove("pdf-capture");
+      window.scrollTo({ top: previousScroll });
     }
   </script>
 
+  <!-- ---------------------------------------------------------- -->
+  <!-- Branded Popup (unchanged) -->
+  <!-- ---------------------------------------------------------- -->
   <script>
-    (function() {
+    (function () {
       const popup = document.createElement("div");
       popup.innerHTML = "Generated by <strong>GenZai.in</strong>";
       Object.assign(popup.style, {
@@ -438,7 +526,7 @@
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         opacity: "0",
         transform: "translateY(10px)",
-        transition: "opacity 0.5s ease, transform 0.5s ease"
+        transition: "opacity 0.5s ease, transform 0.5s ease",
       });
 
       document.body.appendChild(popup);
