@@ -72,22 +72,69 @@
       cursor: pointer;
       font-weight: 600;
     }
+/* Result card print quality boost */
+#resultCard.pdf-mode {
+  width: 794px;            /* A4 width at 96dpi */
+  min-height: 1123px;      /* A4 height at 96dpi */
+  padding: 40px;
+  background-color: white;
+  font-size: 14px;
+  box-sizing: border-box;
+  position: relative;
+  transform: scale(1);     /* Prevent unintended zoom */
+}
+
+#resultCard.pdf-mode * {
+  font-size: 14px; /* prevent jumbo text */
+}
+
+/* Watermark */
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 60px;
+  color: rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+}
 
     /* --------------------
        Result Card
     -------------------- */
     .result-card {
-      background: #fff;
-      width: 100%;
-      max-width: 794px; /* A4 width @96 dpi */
-      min-height: 1123px; /* A4 height @96 dpi */
-      padding: 30px;
-      border: 1px solid #000;
-      margin: 20px auto;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
-      position: relative;
-    }
+  background: #f9fbfd; /* soft light blue-gray */
+  width: 100%;
+  max-width: 794px;
+  min-height: 1123px;
+  padding: 30px;
+  border: 1px solid #c6d2e1; /* light border */
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* subtle shadow */
+  box-sizing: border-box;
+  position: relative;
+  border-radius: 6px;
+}
+
+
+
+.result-card::after {
+  content: "STAR PUBLIC SCHOOL";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 100px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.05); /* Subtle watermark color */
+  white-space: nowrap;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
 
     /* A4 fixed size used only during PDF capture */
     .pdf-capture {
@@ -208,13 +255,30 @@
       padding: 12px 20px;
     }
 
-    footer {
-      background-color: #004080;
-      color: #fff;
-      text-align: center;
-      padding: 15px;
-      margin-top: 30px;
-    }
+   /* Make body take full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content grows to fill space */
+main {
+  flex: 1;
+}
+
+/* Footer sticks to the bottom */
+footer {
+  background-color: #f0f0f0;
+  text-align: center;
+  
+  padding: 10px 0;
+  font-size: 0.9em;
+  color: #555;
+  border-top: 1px solid #ddd;
+}
+
 
     /* --------------------
        Mobile Styles
@@ -291,6 +355,13 @@
       <input type="text" id="roll" placeholder="Enter Roll No" required />
       <button type="submit">Get Result</button>
     </form>
+    <p style="font-size: 0.9em; color: #888; margin-top: 60px;text-align: left;">
+  🔍 <strong>नोट:</strong> कृपया कक्षा (Class Name) दर्ज करते समय निम्नलिखित संक्षिप्त रूप (शॉर्ट फॉर्म) का उपयोग करें:<br />
+  👉 <strong>NURSERY-A</strong> के लिए <strong>NURA</strong>, <br>👉<strong>NURSERY-B</strong> के लिए <strong>NURB</strong>,<br>👉<strong>NURSERY-C</strong> के लिए <strong>NURC</strong><br />
+  👉 <strong>LKG-A</strong> के लिए <strong>LKGA</strong>, <br>👉<strong>LKG-B</strong> के लिए <strong>LKGB</strong><br />
+  👉 <strong>UKG-A</strong> के लिए <strong>UKGA</strong>, <br>👉<strong>UKG-B</strong> के लिए <strong>UKGB</strong>
+</p>
+
 
     <div id="resultDisplay"></div>
     <button id="downloadBtn" onclick="downloadPDF()">Download as PDF</button>
@@ -340,6 +411,7 @@
 
         display.innerHTML = `
           <div class="result-card" id="resultCard">
+            
             <div class="school-header">
               <img src="logo.jpeg" alt="School Logo" />
               <div class="school-info">
@@ -382,18 +454,21 @@
                 </tr>
               </thead>
               <tbody>
-                ${data.marks.map(
-                  (m) => `
-                  <tr>
-                    <td>${m.subject}</td>
-                    <td>${m.fullMarks}</td>
-                    <td>${Math.floor(m.fullMarks * 0.3)}</td>
-                    <td>${m.obtainedMarks || ""}</td>
-                    <td>${m.secondTerm || ""}</td>
-                    <td>${m.thirdTerm || ""}</td>
-                    <td>${m.AnnTerm || ""}</td>
-                  </tr>`
-                ).join("")}
+             ${data.marks
+  .filter((m) => m.subject.toLowerCase() !== "urdu")
+  .map(
+    (m) => `
+      <tr>
+        <td>${m.subject.toLowerCase() === "sanskrit" ? "Sansk./Urdu" : m.subject}</td>
+        <td>${m.fullMarks}</td>
+        <td>${Math.floor(m.fullMarks * 0.3)}</td>
+        <td>${m.obtainedMarks || ""}</td>
+        <td>${m.secondTerm || ""}</td>
+        <td>${m.thirdTerm || ""}</td>
+        <td>${m.AnnTerm || ""}</td>
+      </tr>`
+  ).join("")}
+
                 <tr class="total-row">
                   <td>Total</td>
                   <td>${data.marks.reduce((sum, m) => sum + m.fullMarks, 0)}</td>
@@ -419,7 +494,7 @@
               <tbody>
                 <tr>
                   <td><strong>Total Marks</strong></td>
-                  <td>${data.total || ""}</td>
+                  <td>${data.totalFullMarks || ""}</td>
                   <td></td>
                   <td></td>
                   <td>${data.annualTotal || ""}</td>
@@ -440,7 +515,14 @@
                 </tr>
                 <tr>
                   <td><strong>Division</strong></td>
-                  <td>${data.division || ""}</td>
+                  <td style="color: ${
+  data.percentage < 30 ? "red" :
+  data.percentage >= 60 ? "green" :
+  "#d99200"  // moderate (orange-like)
+}; font-weight: bold;">
+  ${data.division || ""}
+</td>
+
                   <td></td>
                   <td></td>
                   <td>${data.annualDivision || ""}</td>
@@ -473,38 +555,48 @@
   <!-- ---------------------------------------------------------- -->
   <!-- PDF Generation (Fixed for Mobile) -->
   <!-- ---------------------------------------------------------- -->
-  <script>
-    async function downloadPDF() {
-      const resultCard = document.getElementById("resultCard");
-      if (!resultCard) return;
+<script>
+  async function downloadPDF() {
+    const element = document.getElementById("resultCard");
+    if (!element) return;
 
-      const previousScroll = window.scrollY;
-      resultCard.classList.add("pdf-capture");
+    element.classList.add("pdf-mode");
 
-      // Ensure styles are applied
-      await new Promise((r) => setTimeout(r, 100));
+    // Delay for style application
+    await new Promise((r) => setTimeout(r, 300));
 
-      const canvas = await html2canvas(resultCard, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        scrollY: -window.scrollY, // capture entire element even on mobile
-      });
+    // A4 @ 300dpi = 2480x3508 pixels
+    const canvas = await html2canvas(element, {
+      scale: 3,               // HIGH resolution
+      useCORS: true,
+      backgroundColor: "#fff",
+      width: 794,             // Match .pdf-mode width
+      height: 1123            // Match .pdf-mode height
+    });
 
-      const imgData = canvas.toDataURL("image/jpeg", 1.0);
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+    const imgData = canvas.toDataURL("image/png");
 
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const imgHeight = (canvas.height * pageWidth) / canvas.width;
+    const pdf = new jspdf.jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4"
+    });
 
-      pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, imgHeight, "", "FAST");
-      pdf.save("student_result.pdf");
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const imgProps = {
+      width: pdfWidth,
+      height: (canvas.height * pdfWidth) / canvas.width
+    };
 
-      resultCard.classList.remove("pdf-capture");
-      window.scrollTo({ top: previousScroll });
-    }
-  </script>
+    const positionY = 0;
+    pdf.addImage(imgData, 'PNG', 0, positionY, imgProps.width, imgProps.height, undefined, "FAST");
+
+    pdf.save("student_result.pdf");
+
+    element.classList.remove("pdf-mode");
+  }
+</script>
 
   <!-- ---------------------------------------------------------- -->
   <!-- Branded Popup (unchanged) -->
