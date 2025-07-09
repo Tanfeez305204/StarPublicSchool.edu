@@ -404,10 +404,21 @@ footer {
         }
 
         // Aggregate term totals
-        const firstTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0);
-        const secondTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0);
-        const thirdTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0);
-        const annualTermTotal = data.marks.reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0);
+       const firstTermTotal = data.marks
+  .filter(m => m.subject.toLowerCase() !== "drawing")
+  .reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0);
+
+const secondTermTotal = data.marks
+  .filter(m => m.subject.toLowerCase() !== "drawing")
+  .reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0);
+
+const thirdTermTotal = data.marks
+  .filter(m => m.subject.toLowerCase() !== "drawing")
+  .reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0);
+
+const annualTermTotal = data.marks
+  .filter(m => m.subject.toLowerCase() !== "drawing")
+  .reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0);
 
         display.innerHTML = `
           <div class="result-card" id="resultCard">
@@ -454,30 +465,102 @@ footer {
                 </tr>
               </thead>
               <tbody>
-             ${data.marks
-  .filter((m) => m.subject.toLowerCase() !== "urdu")
-  .map(
-    (m) => `
-      <tr>
-        <td>${m.subject.toLowerCase() === "sanskrit" ? "Sansk./Urdu" : m.subject}</td>
-        <td>${m.fullMarks}</td>
-        <td>${Math.floor(m.fullMarks * 0.3)}</td>
-        <td>${m.obtainedMarks || ""}</td>
-        <td>${m.secondTerm || ""}</td>
-        <td>${m.thirdTerm || ""}</td>
-        <td>${m.AnnTerm || ""}</td>
-      </tr>`
-  ).join("")}
+            ${data.marks
+  .filter(m => m.subject.toLowerCase() !== "urdu")
+  .map(m => {
+    const cls = data.class.trim();
+    // match exactly: NURSERY-A/B/C, LKG-A/B, UKG-A/B (case‑insensitive)
+    const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/i.test(cls);
+    const subj = m.subject.toLowerCase();
+    // for these classes, Science & Computer get dashes
+    const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
 
-                <tr class="total-row">
-                  <td>Total</td>
-                  <td>${data.marks.reduce((sum, m) => sum + m.fullMarks, 0)}</td>
-                  <td>${data.marks.reduce((sum, m) => sum + Math.floor(m.fullMarks * 0.3), 0)}</td>
-                  <td>${firstTermTotal}</td>
-                  <td>${secondTermTotal}</td>
-                  <td>${thirdTermTotal}</td>
-                  <td>${annualTermTotal}</td>
-                </tr>
+    return `
+      <tr>
+        <td>${subj === "sanskrit" ? "Sansk./Urdu" : m.subject}</td>
+        <td>${subj === "drawing"      ? "Grade"
+             : isSpecial             ? "—"
+                                     : m.fullMarks}</td>
+        <td>${subj === "drawing"      ? "—"
+             : isSpecial             ? "—"
+                                     : Math.floor(m.fullMarks * 0.3)}</td>
+        <td>${m.obtainedMarks || ""}</td>
+        <td>${m.secondTerm   || ""}</td>
+        <td>${m.thirdTerm    || ""}</td>
+        <td>${m.AnnTerm      || ""}</td>
+      </tr>`;
+  })
+  .join("")}
+ <tr class="total-row">
+  <td>Total</td>
+  <td>${
+    data.marks
+      .filter(m => {
+        const cls = data.class.trim().toLowerCase();
+        const subj = m.subject.toLowerCase();
+        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+        return subj !== "drawing" && !isSpecial;
+      })
+      .reduce((sum, m) => sum + m.fullMarks, 0)
+  }</td>
+  <td>${
+    data.marks
+      .filter(m => {
+        const cls = data.class.trim().toLowerCase();
+        const subj = m.subject.toLowerCase();
+        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+        return subj !== "drawing" && !isSpecial;
+      })
+      .reduce((sum, m) => sum + Math.floor(m.fullMarks * 0.3), 0)
+  }</td>
+  <td>${
+    data.marks
+      .filter(m => {
+        const cls = data.class.trim().toLowerCase();
+        const subj = m.subject.toLowerCase();
+        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+        return subj !== "drawing" && !isSpecial;
+      })
+      .reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0)
+  }</td>
+  <td>${
+    data.marks
+      .filter(m => {
+        const cls = data.class.trim().toLowerCase();
+        const subj = m.subject.toLowerCase();
+        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+        return subj !== "drawing" && !isSpecial;
+      })
+      .reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0)
+  }</td>
+  <td>${
+    data.marks
+      .filter(m => {
+        const cls = data.class.trim().toLowerCase();
+        const subj = m.subject.toLowerCase();
+        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+        return subj !== "drawing" && !isSpecial;
+      })
+      .reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0)
+  }</td>
+  <td>${
+    data.marks
+      .filter(m => {
+        const cls = data.class.trim().toLowerCase();
+        const subj = m.subject.toLowerCase();
+        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+        return subj !== "drawing" && !isSpecial;
+      })
+      .reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0)
+  }</td>
+</tr>
+
               </tbody>
             </table>
 
@@ -492,13 +575,19 @@ footer {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><strong>Total Marks</strong></td>
-                  <td>${data.totalFullMarks || ""}</td>
-                  <td></td>
-                  <td></td>
-                  <td>${data.annualTotal || ""}</td>
-                </tr>
+               <tr>
+  <td><strong>Total Marks</strong></td>
+  <td>${
+    data.marks
+      .filter(m => m.subject.toLowerCase() !== "drawing")
+      
+      .reduce((sum, m) => sum + m.fullMarks, 0)
+  }</td>
+  <td></td>
+  <td></td>
+  <td>${data.annualTotal || ""}</td>
+</tr>
+
                 <tr>
                   <td><strong>Marks Obtained</strong></td>
                   <td>${data.totalObtained || data.total || ""}</td>
