@@ -575,18 +575,14 @@ const annualTermTotal = data.marks
                 </tr>
               </thead>
               <tbody>
-               <tr>
+             <tr>
   <td><strong>Total Marks</strong></td>
-  <td>${
-    data.marks
-      .filter(m => m.subject.toLowerCase() !== "drawing")
-      
-      .reduce((sum, m) => sum + m.fullMarks, 0)
-  }</td>
+  <td>${data.totalFullMarks || ""}</td>
   <td></td>
   <td></td>
   <td>${data.annualTotal || ""}</td>
 </tr>
+
 
                 <tr>
                   <td><strong>Marks Obtained</strong></td>
