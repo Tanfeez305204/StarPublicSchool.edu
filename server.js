@@ -2,12 +2,27 @@ const express = require('express');
 const xlsx = require('xlsx');
 const path = require('path');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit'); // ✅ Import rate limiter
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.static('public')); // Serve HTML, CSS, JS
+
+// ✅ Apply rate limiter only to /result route
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per minute
+  message: {
+    error: "Too many requests. Please try again after a minute."
+  },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// ✅ Apply the limiter only to /result
+app.use("/result", limiter);
 
 // Load Excel data
 const workbook = xlsx.readFile(path.join(__dirname, 'results.xlsx'));
