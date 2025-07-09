@@ -7,30 +7,29 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.static('public')); // Serves frontend files like HTML, CSS, logo
+app.use(express.static('public')); // Serve HTML, CSS, JS
 
 // Load Excel data
 const workbook = xlsx.readFile(path.join(__dirname, 'results.xlsx'));
-const sheet = workbook.Sheets['result']; // Sheet name must be 'result'
+const sheet = workbook.Sheets['result'];
 const allData = xlsx.utils.sheet_to_json(sheet);
 
-// Utility to replace blank/undefined with "N/A"
+// Helpers
 const safeValue = (val, fallback = "N/A") =>
   val === undefined || val === null || String(val).trim() === "" ? fallback : String(val).trim();
 
-// Check if value is a valid number
 const isNumeric = (val) => !isNaN(parseFloat(val)) && isFinite(val);
 
-// API to fetch result
+// API endpoint
 app.get('/result', (req, res) => {
   const classMap = {
     "NURA": "NURSERY-A",
     "NURB": "NURSERY-B",
     "NURC": "NURSERY-C",
-    "LKA": "LKG-A",
-    "LKB": "LKG-B",
-    "UKA": "UKG-A",
-    "UKB": "UKG-B"
+    "LKA": "L.K.G-A",
+    "LKB": "L.K.G-B",
+    "UKA": "U.K.G-A",
+    "UKB": "U.K.G-B"
   };
 
   const queryClass = req.query.class?.trim().toUpperCase();
@@ -41,7 +40,6 @@ app.get('/result', (req, res) => {
     return res.json({ error: "Class and Roll number are required." });
   }
 
-  // Match student record
   const student = allData.find(
     (s) =>
       String(s.Class).trim().toUpperCase() === studentClass &&
@@ -52,31 +50,37 @@ app.get('/result', (req, res) => {
     return res.json({ error: "Student not found." });
   }
 
-  // Prepare marks array
-  const excludedKeys = ['class', 'roll', 'name', 'fathername', 'father name'];
+  const excludedKeys = ['class', 'roll', 'name', 'fathername', 'father name'].map(k => k.toLowerCase());
+
   const marks = [];
   let total = 0;
+  let totalFullMarks = 0;
   const fullMarksPerSubject = 100;
 
   for (const key in student) {
-    if (!excludedKeys.includes(key.trim().toLowerCase())) {
+    const lowerKey = key.trim().toLowerCase();
+    if (!excludedKeys.includes(lowerKey)) {
+      const subjectName = key.trim();
       const rawMark = student[key];
+      const obtained = safeValue(rawMark);
+      const isDrawing = subjectName.toLowerCase() === 'drawing';
+      const passMarks = Math.floor(fullMarksPerSubject * 0.3);
+
       marks.push({
-        subject: key,
+        subject: subjectName,
         fullMarks: fullMarksPerSubject,
-        passMarks: Math.floor(fullMarksPerSubject * 0.3),
-        obtainedMarks: safeValue(rawMark)
+        passMarks,
+        obtainedMarks: obtained
       });
 
-      if (isNumeric(rawMark)) {
+      if (!isDrawing && isNumeric(rawMark)) {
         total += parseFloat(rawMark);
+        totalFullMarks += fullMarksPerSubject;
       }
     }
   }
 
-  const totalFullMarks = marks.length * fullMarksPerSubject;
   const percentage = totalFullMarks ? (total / totalFullMarks) * 100 : 0;
-
   const division =
     percentage >= 60 ? 'First' :
     percentage >= 45 ? 'Second' :
@@ -86,7 +90,7 @@ app.get('/result', (req, res) => {
     schoolName: "STAR PUBLIC SCHOOL",
     schoolAddress: "Main road Mathia Bazar, Meghwal",
     studentName: safeValue(student.Name),
-    fatherName: safeValue(student.FatherName),
+    fatherName: safeValue(student.FatherName || student['Father Name']),
     class: safeValue(studentClass),
     roll: safeValue(roll),
     marks,
@@ -98,7 +102,6 @@ app.get('/result', (req, res) => {
   });
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`✅ Server is running at http://localhost:${PORT}`);
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });
