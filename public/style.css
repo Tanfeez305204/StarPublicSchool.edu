@@ -113,15 +113,21 @@ nav img{
 }
 
 .hero-btn{
-    display: inline-block;
-    text-decoration: none;
-    color:white;
-    border: 1px solid white;
-    padding: 12px 34px;
-    font-size: 13px;
-    background: transparent;
-    position: relative;
-    cursor: pointer;
+   display: inline-block;
+  text-decoration: none;
+  color: white;
+  background-color: #2180b3;
+  border: none;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  width: auto;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
     
 
 }
