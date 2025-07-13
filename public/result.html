@@ -496,72 +496,97 @@ const annualTermTotal = data.marks
  <tr class="total-row">
   <td>Total</td>
   <td>${
-    data.marks
-      .filter(m => {
-        const cls = data.class.trim().toLowerCase();
-        const subj = m.subject.toLowerCase();
-        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
-        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
-        return subj !== "drawing" && !isSpecial;
-      })
-      .reduce((sum, m) => sum + m.fullMarks, 0)
+    (() => {
+      const val = data.marks
+        .filter(m => {
+          const cls = data.class.trim().toLowerCase();
+          const subj = m.subject.toLowerCase();
+          const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+          const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+          return subj !== "drawing" && !isSpecial;
+        })
+        .reduce((sum, m) => {
+          const val = Number(m.fullMarks);
+          return !isNaN(val) ? sum + val : sum;
+        }, 0);
+      return isNaN(val) ? "_" : val;
+    })()
   }</td>
   <td>${
-    data.marks
-      .filter(m => {
-        const cls = data.class.trim().toLowerCase();
-        const subj = m.subject.toLowerCase();
-        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
-        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
-        return subj !== "drawing" && !isSpecial;
-      })
-      .reduce((sum, m) => sum + Math.floor(m.fullMarks * 0.3), 0)
+    (() => {
+      const val = data.marks
+        .filter(m => {
+          const cls = data.class.trim().toLowerCase();
+          const subj = m.subject.toLowerCase();
+          const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+          const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+          return subj !== "drawing" && !isSpecial;
+        })
+        .reduce((sum, m) => {
+          const val = Number(m.fullMarks);
+          return !isNaN(val) ? sum + Math.floor(val * 0.3) : sum;
+        }, 0);
+      return isNaN(val) ? "_" : val;
+    })()
   }</td>
   <td>${
-    data.marks
-      .filter(m => {
-        const cls = data.class.trim().toLowerCase();
-        const subj = m.subject.toLowerCase();
-        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
-        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
-        return subj !== "drawing" && !isSpecial;
-      })
-      .reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0)
+    (() => {
+      const val = data.marks
+        .filter(m => {
+          const cls = data.class.trim().toLowerCase();
+          const subj = m.subject.toLowerCase();
+          const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+          const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+          return subj !== "drawing" && !isSpecial;
+        })
+        .reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0);
+      return isNaN(val) ? "_" : val;
+    })()
   }</td>
   <td>${
-    data.marks
-      .filter(m => {
-        const cls = data.class.trim().toLowerCase();
-        const subj = m.subject.toLowerCase();
-        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
-        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
-        return subj !== "drawing" && !isSpecial;
-      })
-      .reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0)
+    (() => {
+      const val = data.marks
+        .filter(m => {
+          const cls = data.class.trim().toLowerCase();
+          const subj = m.subject.toLowerCase();
+          const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+          const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+          return subj !== "drawing" && !isSpecial;
+        })
+        .reduce((sum, m) => sum + (Number(m.secondTerm) || 0), 0);
+      return isNaN(val) ? "_" : val;
+    })()
   }</td>
   <td>${
-    data.marks
-      .filter(m => {
-        const cls = data.class.trim().toLowerCase();
-        const subj = m.subject.toLowerCase();
-        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
-        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
-        return subj !== "drawing" && !isSpecial;
-      })
-      .reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0)
+    (() => {
+      const val = data.marks
+        .filter(m => {
+          const cls = data.class.trim().toLowerCase();
+          const subj = m.subject.toLowerCase();
+          const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+          const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+          return subj !== "drawing" && !isSpecial;
+        })
+        .reduce((sum, m) => sum + (Number(m.thirdTerm) || 0), 0);
+      return isNaN(val) ? "_" : val;
+    })()
   }</td>
   <td>${
-    data.marks
-      .filter(m => {
-        const cls = data.class.trim().toLowerCase();
-        const subj = m.subject.toLowerCase();
-        const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
-        const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
-        return subj !== "drawing" && !isSpecial;
-      })
-      .reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0)
+    (() => {
+      const val = data.marks
+        .filter(m => {
+          const cls = data.class.trim().toLowerCase();
+          const subj = m.subject.toLowerCase();
+          const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+          const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+          return subj !== "drawing" && !isSpecial;
+        })
+        .reduce((sum, m) => sum + (Number(m.AnnTerm) || 0), 0);
+      return isNaN(val) ? "_" : val;
+    })()
   }</td>
 </tr>
+
 
               </tbody>
             </table>
