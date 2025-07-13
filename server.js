@@ -41,10 +41,10 @@ app.get('/result', (req, res) => {
     "NURA": "NURSERY-A",
     "NURB": "NURSERY-B",
     "NURC": "NURSERY-C",
-    "LKA": "L.K.G-A",
-    "LKB": "L.K.G-B",
-    "UKA": "U.K.G-A",
-    "UKB": "U.K.G-B"
+    "LKGA": "L.K.G-A",
+    "LKGB": "L.K.G-B",
+    "UKGA": "U.K.G-A",
+    "UKGB": "U.K.G-B"
   };
 
   const queryClass = req.query.class?.trim().toUpperCase();
@@ -69,31 +69,60 @@ app.get('/result', (req, res) => {
 
   const marks = [];
   let total = 0;
-  let totalFullMarks = 0;
-  const fullMarksPerSubject = 100;
+let totalFullMarks = 0;
+const fullMarksPerSubject = 100;
 
-  for (const key in student) {
-    const lowerKey = key.trim().toLowerCase();
-    if (!excludedKeys.includes(lowerKey)) {
-      const subjectName = key.trim();
-      const rawMark = student[key];
-      const obtained = safeValue(rawMark);
-      const isDrawing = subjectName.toLowerCase() === 'drawing';
-      const passMarks = Math.floor(fullMarksPerSubject * 0.3);
+const lowerStudentClass = studentClass.toLowerCase();
+const primaryClasses = ['nursery-a', 'nursery-b', 'nursery-c', 'l.k.g-a', 'l.k.g-b', 'u.k.g-a', 'u.k.g-b'];
 
+for (const key in student) {
+  const lowerKey = key.trim().toLowerCase();
+  if (!excludedKeys.includes(lowerKey)) {
+    const subjectName = key.trim();
+    const rawMark = student[key];
+    const obtained = safeValue(rawMark);
+    const isDrawing = subjectName.toLowerCase() === 'drawing';
+    const isComputerOrScience = ['computer', 'science'].includes(subjectName.toLowerCase());
+
+    // Special case: Nursery/LKG/UKG — show "_" for Computer/Science
+    if (primaryClasses.includes(lowerStudentClass) && isComputerOrScience) {
       marks.push({
         subject: subjectName,
-        fullMarks: fullMarksPerSubject,
-        passMarks,
+        fullMarks: "_",
+        passMarks: "_",
+        obtainedMarks: "_"
+      });
+      continue; // ⛔ skip total calculations
+    }
+
+    // Drawing subject (grade only)
+    if (isDrawing) {
+      marks.push({
+        subject: subjectName,
+        fullMarks: "Grade",
+        passMarks: "–",
         obtainedMarks: obtained
       });
+      continue; // ⛔ skip total calculations
+    }
 
-      if (!isDrawing && isNumeric(rawMark)) {
-        total += parseFloat(rawMark);
-        totalFullMarks += fullMarksPerSubject;
-      }
+    const passMarks = Math.floor(fullMarksPerSubject * 0.3);
+
+    marks.push({
+      subject: subjectName,
+      fullMarks: fullMarksPerSubject,
+      passMarks,
+      obtainedMarks: obtained
+    });
+
+    // ✅ Only add numeric marks to total
+    if (isNumeric(rawMark)) {
+      total += parseFloat(rawMark);
+      totalFullMarks += fullMarksPerSubject;
     }
   }
+}
+
 
   const percentage = totalFullMarks ? (total / totalFullMarks) * 100 : 0;
   const division =
