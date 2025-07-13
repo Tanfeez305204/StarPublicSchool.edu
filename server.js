@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit'); // ✅ Import rate limiter
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+app.set('trust proxy', true)
 app.use(cors());
 app.use(express.static('public')); // Serve HTML, CSS, JS
 
