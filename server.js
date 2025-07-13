@@ -41,10 +41,10 @@ app.get('/result', (req, res) => {
     "NURA": "NURSERY-A",
     "NURB": "NURSERY-B",
     "NURC": "NURSERY-C",
-    "LKA": "L.K.G-A",
-    "LKB": "L.K.G-B",
-    "UKA": "U.K.G-A",
-    "UKB": "U.K.G-B"
+    "LKGA": "L.K.G-A",
+    "LKGB": "L.K.G-B",
+    "UKGA": "U.K.G-A",
+    "UKGB": "U.K.G-B"
   };
 
   const queryClass = req.query.class?.trim().toUpperCase();
