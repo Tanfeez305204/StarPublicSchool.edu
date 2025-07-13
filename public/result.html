@@ -406,7 +406,7 @@ footer {
         }
 
         // Aggregate term totals
-       const firstTermTotal = data.marks
+     const firstTermTotal = data.marks
   .filter(m => m.subject.toLowerCase() !== "drawing")
   .reduce((sum, m) => sum + (Number(m.obtainedMarks) || 0), 0);
 
@@ -601,14 +601,30 @@ const annualTermTotal = data.marks
                   <th>Annual Term</th>
                 </tr>
               </thead>
-              <tbody>
-             <tr>
+         <tr>
   <td><strong>Total Marks</strong></td>
-  <td>${data.totalFullMarks || ""}</td>
+  <td>${
+    (() => {
+      const val = data.marks
+        .filter(m => {
+          const cls = data.class.trim().toLowerCase();
+          const subj = m.subject.toLowerCase();
+          const isLowerPrimary = /^(nursery-[abc]|lkg-[ab]|ukg-[ab])$/.test(cls);
+          const isSpecial = isLowerPrimary && (subj === "science" || subj === "computer");
+          return subj !== "drawing" && !isSpecial;
+        })
+        .reduce((sum, m) => {
+          const val = Number(m.fullMarks);
+          return !isNaN(val) ? sum + val : sum;
+        }, 0);
+      return isNaN(val) ? "_" : val;
+    })()
+  }</td>
   <td></td>
   <td></td>
   <td>${data.annualTotal || ""}</td>
 </tr>
+
 
 
                 <tr>
